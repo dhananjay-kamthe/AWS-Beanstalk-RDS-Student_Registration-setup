@@ -89,6 +89,30 @@ psql -h <RDS-endpoint> -U <db-user> -d <db-name>
 CREATE DATABASE test_db;
 SHOW DATABASES;
 ```
+## Screenshots
+
+ 🖼️ Security Group of RDS
+ <p align="center"> <img src="img/sg of RDS.png" alt="Jenkins Configuration" width="500"/> </p>
+
+
+🖼️ Security Group of Beanstalk
+ <p align="center"> <img src="img/sg of BeanStalk.png" alt="Jenkins Build Success" width="800"/> </p>
+
+
+🖼️ Security Group of Beanstalk Ec2
+ <p align="center"> <img src="img/sg of beanstalk ec2.png" alt="ECR Image Uploaded" width="800"/> </p>
+ 
+
+🖼️ Record Added Successfully in RDS
+ <p align="center"> <img src="img/record added in rds.png" alt="Lambda Invocation Log" width="800"/> </p>
+
+
+🖼️ Form.html
+ <p align="center"> <img src="img/form.html.png" alt="SNS Email Notification" width="800"/> </p>
+
+
+ 🖼️ Submission Success
+ <p align="center"> <img src="img/succesfully added.png" alt="DynamoDB Table Log" width="800"/> </p>
 
 #### 🔒 Optional Enhancements
 ### 1. Secure RDS Credentials
