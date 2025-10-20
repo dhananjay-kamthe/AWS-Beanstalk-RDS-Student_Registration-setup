@@ -1,5 +1,5 @@
 ### 📘 Deploying AWS Elastic Beanstalk with RDS Access from EC2
-## #🛠️ Tools & Technologies
+### 🛠️ Tools & Technologies
 
 AWS Elastic Beanstalk
 
@@ -10,6 +10,7 @@ Amazon EC2
 VPC, Subnets, Security Groups
 
 ### Optional: AWS Systems Manager, CloudWatch
+
 ---
 🏗 Architecture Overview
 +---------------------+        +----------------------+
@@ -23,6 +24,7 @@ VPC, Subnets, Security Groups
 | EC2 Instance        |
 | (Database Client)   |
 +---------------------+
+
 ---
 ### ✅ Step-by-Step Instructions
 ### Step 1: Set Up Elastic Beanstalk
