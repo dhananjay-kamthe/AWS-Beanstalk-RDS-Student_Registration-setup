@@ -56,7 +56,7 @@ Set Public Accessibility only if external access is required.
 
 Launch an EC2 instance in the same VPC.
 
-SSH into it:
+#### SSH into it:
 ```bash
 ssh -i your-key.pem ec2-user@<EC2-Public-IP>
 ```
