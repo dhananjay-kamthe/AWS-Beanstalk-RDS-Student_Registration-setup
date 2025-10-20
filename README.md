@@ -1,220 +1,131 @@
-# 📚 Using AWS Elastic Beanstalk to Set Up RDS and Access It from an EC2 Instance
+📘 Deploying AWS Elastic Beanstalk with RDS Access from EC2
+🛠️ Tools & Technologies
 
-## 🛠️ Technologies & Tools:
-- AWS Elastic Beanstalk
-- Amazon RDS (MySQL/PostgreSQL)
-- Amazon EC2
-- VPC/Subnet/Security Groups
-- (Optional: AWS Systems Manager, CloudWatch)
+AWS Elastic Beanstalk
 
-## 🏗️ Architecture Diagram
+Amazon RDS (MySQL/PostgreSQL)
 
-```plaintext
-+------------------+          +---------------------+
-| Elastic Beanstalk| <------> | Amazon RDS          |
-| (Web App Server) |          | (MySQL/PostgreSQL) |
-+------------------+          +---------------------+
+Amazon EC2
+
+VPC, Subnets, Security Groups
+
+Optional: AWS Systems Manager, CloudWatch
+
+🏗 Architecture Overview
++---------------------+        +----------------------+
+| Elastic Beanstalk    | <-->  | Amazon RDS           |
+| (Web Application)   |        | (MySQL/PostgreSQL)  |
++---------------------+        +----------------------+
            |
-           | (Same VPC/Subnet)
+           | (Within same VPC/Subnet)
            ↓
-+------------------+
-| EC2 Instance     |
-| (Database Client)|
-+------------------+
-```
++---------------------+
+| EC2 Instance        |
+| (Database Client)   |
++---------------------+
 
+✅ Step-by-Step Instructions
+Step 1: Set Up Elastic Beanstalk
 
-## ✅ Step-by-Step Setup Guide
+Create a new EB application (Node.js, Python Flask, PHP).
 
-### Step 1: Elastic Beanstalk Environment Setup
+While configuring the environment:
 
-1. Create a new Elastic Beanstalk application using Node.js, Python Flask, or PHP.
+Enable creation of an RDS instance (MySQL/PostgreSQL).
 
-2. During environment creation:
+Make sure RDS is in the same VPC as EB.
 
-- Select the option to create an integrated RDS instance (MySQL or PostgreSQL).
+Step 2: Configure RDS
 
-- Ensure the RDS instance is launched in the same VPC as Elastic Beanstalk.
+Get the RDS endpoint and credentials from the EB console.
 
-### Step 2: Configure RDS Database
+Adjust RDS security group rules:
 
-1. After deployment, note the RDS Endpoint and database credentials from the Elastic Beanstalk console.
+Open DB port: 3306 (MySQL) or 5432 (PostgreSQL)
 
-2. Modify the RDS security group:
+Allow inbound traffic from EB SG and EC2 SG.
 
-    - Add inbound rule to allow database port (3306 for MySQL or 5432 for PostgreSQL).
+Set Public Accessibility only if external access is required.
 
-    - Set the source to:
+Step 3: EC2 Instance Setup
 
-        - Elastic Beanstalk environment’s security group.
+Launch an EC2 instance in the same VPC.
 
-        - EC2 instance’s security group.
+SSH into it:
 
-3. (Optional) Enable Public Accessibility only if secure external access is required.
-
-### Step 3: EC2 Instance Setup
-
-1. Launch a separate EC2 instance in the same VPC as the RDS instance.
-
-2. SSH into the EC2 instance:
-
-```bash
 ssh -i your-key.pem ec2-user@<EC2-Public-IP>
-```
 
-1. Install the database client:
-```bash
-## For MySQL
+
+Install database client:
+
+# MySQL
 sudo yum install -y mysql
 
-## For PostgreSQL
+# PostgreSQL
 sudo yum install -y postgresql
-```
-### Step 4: Access RDS from EC2
 
-1. Connect to the RDS database using the endpoint and credentials:
-```bash
-# MySQL Example
+Step 4: Connect to RDS from EC2
+# MySQL
 mysql -h <RDS-endpoint> -u <db-user> -p
 
-# PostgreSQL Example
+# PostgreSQL
 psql -h <RDS-endpoint> -U <db-user> -d <db-name>
-```
 
-2. Test read/write operations:
-```sql
+
+Test by creating a database and listing:
+
 CREATE DATABASE test_db;
 SHOW DATABASES;
-```
---- 
 
-## ✅ Optional Enhancements Implementation Steps
-### 🔐 1. Store RDS Credentials Securely
-#### Step 1: Store Credentials in AWS Systems Manager Parameter Store
+🔒 Optional Enhancements
+1. Secure RDS Credentials
+Using AWS Systems Manager Parameter Store
 
-1. Open AWS Systems Manager Console → Parameter Store → Create Parameter.
+Store credentials:
 
-2. Create parameters:
+/project/db-username → SecureString → <db-username>
 
-- Name: /project/db-username
+/project/db-password → SecureString → <db-password>
 
-- Type: SecureString
-
-- Value: <db-username>
-
-
-And:
-
-- Name: /project/db-password
-
-- Type: SecureString
-
-- Value: <db-password>
-
-#### Step 2: Access Stored Credentials from EC2 Instance
-
-1. Install AWS CLI if not already installed:
-```bash
+Retrieve credentials on EC2
 sudo yum install -y aws-cli
-```
 
-2. Retrieve credentials securely:
-```bash
 aws ssm get-parameter --name "/project/db-username" --with-decryption --query "Parameter.Value" --output text
 aws ssm get-parameter --name "/project/db-password" --with-decryption --query "Parameter.Value" --output text
-```
 
-### 🧱 2. Add Test Script for Database Operations
-#### Step 1: Create a Script test_db.sh on EC2
-```bash
+2. DB Test Script
 #!/bin/bash
 
 DB_HOST="<RDS-endpoint>"
 DB_USER=$(aws ssm get-parameter --name "/project/db-username" --with-decryption --query "Parameter.Value" --output text)
 DB_PASS=$(aws ssm get-parameter --name "/project/db-password" --with-decryption --query "Parameter.Value" --output text)
 
-# Example MySQL Operations
 mysql -h $DB_HOST -u $DB_USER -p$DB_PASS -e "CREATE DATABASE IF NOT EXISTS test_db;"
 mysql -h $DB_HOST -u $DB_USER -p$DB_PASS -e "SHOW DATABASES;"
-```
-#### Step 2: Make Script Executable and Run It
-```bash
+
+
+Make it executable and run:
+
 chmod +x test_db.sh
 ./test_db.sh
-```
 
-### 📊 3. Set Up Monitoring Using Amazon CloudWatch
-#### Step 1: Create CloudWatch Alarm for RDS Metrics
+3. Monitor RDS Using CloudWatch
 
-- Go to AWS Management Console → CloudWatch → Alarms → Create Alarm.
+Create CloudWatch alarms for CPU, Storage, and Connections.
 
-- Select RDS Metrics → Choose metrics like:
+Configure notifications (e.g., email via SNS).
 
-    - CPUUtilization
+⚠️ Security Recommendations
 
-    - FreeStorageSpace
+Avoid enabling Public Accessibility unless necessary.
 
-    - DatabaseConnections
+Limit RDS inbound rules to EB and EC2 security groups only.
 
-- Set threshold (e.g., CPUUtilization > 80%).
+Do not hardcode credentials; use Parameter Store or Secrets Manager.
 
-#### Step 2: Configure Alarm Actions
+Monitor RDS with CloudWatch regularly.
 
-- Set notification (e.g., send email using SNS topic).
+👨‍💻 Author
 
-#### These steps help you:
-
-    - Keep credentials safe.
-
-    - Test DB access automatically.
-
-    - Monitor RDS health in production.
-
----
-
-### ✅ How to Use the Script
-
-1. Replace <RDS-endpoint> with your actual RDS endpoint URL.
-
-2. Upload the script to the EC2 instance (or create it directly):
-```bash
-nano test_db.sh
-# Paste the script content, save and exit
-```
-
-3. Make the script executable:
-```bash
-chmod +x test_db.sh
-```
-
-4. Run the script:
-```bash
-./test_db.sh
-```
-
-### ✅ What the Script Does
-
-- Retrieves DB username and password securely from Parameter Store.
-
-- Creates a database named test_db (if not already present).
-
-- Lists all available databases on the RDS instance.
-
----
-
-### 🔐 Security Considerations
-
-- ✅ Do NOT enable Public Accessibility unless absolutely necessary.
-
-- ✅ Configure RDS security group to allow inbound access only from:
-
-    - Elastic Beanstalk security group.
-
-    - Specific EC2 instance security group.
-
-- ✅ Avoid hardcoding database credentials in application code or scripts.
-
-- ✅ Use AWS Systems Manager Parameter Store or Secrets Manager to store credentials securely.
-
-- ✅ Regularly monitor CloudWatch metrics for RDS to detect unusual activity.
-
+Dhananjay Kamthe
+📧 dhananjaykamthe2@gmail.com
