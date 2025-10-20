@@ -1,5 +1,5 @@
-📘 Deploying AWS Elastic Beanstalk with RDS Access from EC2
-🛠️ Tools & Technologies
+### 📘 Deploying AWS Elastic Beanstalk with RDS Access from EC2
+## #🛠️ Tools & Technologies
 
 AWS Elastic Beanstalk
 
@@ -24,8 +24,8 @@ Optional: AWS Systems Manager, CloudWatch
 | (Database Client)   |
 +---------------------+
 
-✅ Step-by-Step Instructions
-Step 1: Set Up Elastic Beanstalk
+### ✅ Step-by-Step Instructions
+### Step 1: Set Up Elastic Beanstalk
 
 Create a new EB application (Node.js, Python Flask, PHP).
 
@@ -35,7 +35,7 @@ Enable creation of an RDS instance (MySQL/PostgreSQL).
 
 Make sure RDS is in the same VPC as EB.
 
-Step 2: Configure RDS
+ ### Step 2: Configure RDS
 
 Get the RDS endpoint and credentials from the EB console.
 
@@ -47,7 +47,7 @@ Allow inbound traffic from EB SG and EC2 SG.
 
 Set Public Accessibility only if external access is required.
 
-Step 3: EC2 Instance Setup
+ ### Step 3: EC2 Instance Setup
 
 Launch an EC2 instance in the same VPC.
 
@@ -56,29 +56,29 @@ SSH into it:
 ssh -i your-key.pem ec2-user@<EC2-Public-IP>
 
 
-Install database client:
+### Install database client:
 
-# MySQL
+### MySQL
 sudo yum install -y mysql
 
-# PostgreSQL
+### PostgreSQL
 sudo yum install -y postgresql
 
 Step 4: Connect to RDS from EC2
-# MySQL
+### MySQL
 mysql -h <RDS-endpoint> -u <db-user> -p
 
-# PostgreSQL
+### PostgreSQL
 psql -h <RDS-endpoint> -U <db-user> -d <db-name>
 
 
-Test by creating a database and listing:
+### Test by creating a database and listing:
 
 CREATE DATABASE test_db;
 SHOW DATABASES;
 
-🔒 Optional Enhancements
-1. Secure RDS Credentials
+### 🔒 Optional Enhancements
+### 1. Secure RDS Credentials
 Using AWS Systems Manager Parameter Store
 
 Store credentials:
@@ -93,7 +93,7 @@ sudo yum install -y aws-cli
 aws ssm get-parameter --name "/project/db-username" --with-decryption --query "Parameter.Value" --output text
 aws ssm get-parameter --name "/project/db-password" --with-decryption --query "Parameter.Value" --output text
 
-2. DB Test Script
+### 2. DB Test Script
 #!/bin/bash
 
 DB_HOST="<RDS-endpoint>"
@@ -109,7 +109,7 @@ Make it executable and run:
 chmod +x test_db.sh
 ./test_db.sh
 
-3. Monitor RDS Using CloudWatch
+### 3. Monitor RDS Using CloudWatch
 
 Create CloudWatch alarms for CPU, Storage, and Connections.
 
@@ -125,7 +125,7 @@ Do not hardcode credentials; use Parameter Store or Secrets Manager.
 
 Monitor RDS with CloudWatch regularly.
 
-👨‍💻 Author
+### 👨‍💻 Author
 
 Dhananjay Kamthe
 📧 dhananjaykamthe2@gmail.com
