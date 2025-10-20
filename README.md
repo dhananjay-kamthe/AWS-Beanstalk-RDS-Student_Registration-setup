@@ -9,8 +9,8 @@ Amazon EC2
 
 VPC, Subnets, Security Groups
 
-Optional: AWS Systems Manager, CloudWatch
-
+### Optional: AWS Systems Manager, CloudWatch
+---
 🏗 Architecture Overview
 +---------------------+        +----------------------+
 | Elastic Beanstalk    | <-->  | Amazon RDS           |
@@ -23,7 +23,7 @@ Optional: AWS Systems Manager, CloudWatch
 | EC2 Instance        |
 | (Database Client)   |
 +---------------------+
-
+---
 ### ✅ Step-by-Step Instructions
 ### Step 1: Set Up Elastic Beanstalk
 
