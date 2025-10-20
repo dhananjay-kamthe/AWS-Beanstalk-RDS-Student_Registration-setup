@@ -9,10 +9,12 @@ Amazon EC2
 
 VPC, Subnets, Security Groups
 
-### Optional: AWS Systems Manager, CloudWatch
+Optional: AWS Systems Manager, CloudWatch
 
 ---
-🏗 Architecture Overview
+## 🏗 Architecture Overview
+
+```plaintext
 +---------------------+        +----------------------+
 | Elastic Beanstalk    | <-->  | Amazon RDS           |
 | (Web Application)   |        | (MySQL/PostgreSQL)  |
@@ -25,7 +27,8 @@ VPC, Subnets, Security Groups
 | (Database Client)   |
 +---------------------+
 
----
+```
+
 ### ✅ Step-by-Step Instructions
 ### Step 1: Set Up Elastic Beanstalk
 
@@ -54,37 +57,45 @@ Set Public Accessibility only if external access is required.
 Launch an EC2 instance in the same VPC.
 
 SSH into it:
-
+```bash
 ssh -i your-key.pem ec2-user@<EC2-Public-IP>
-
+```
 
 ### Install database client:
 
-### MySQL
+#### MySQL
+```bash
 sudo yum install -y mysql
+```
 
-### PostgreSQL
+#### PostgreSQL
+```bash
 sudo yum install -y postgresql
+```
 
-Step 4: Connect to RDS from EC2
-### MySQL
+### Step 4: Connect to RDS from EC2
+#### MySQL
+```bash
 mysql -h <RDS-endpoint> -u <db-user> -p
+```
 
-### PostgreSQL
+#### PostgreSQL
+```bash
 psql -h <RDS-endpoint> -U <db-user> -d <db-name>
-
+ ```
 
 ### Test by creating a database and listing:
-
+```bash
 CREATE DATABASE test_db;
 SHOW DATABASES;
+```
 
-### 🔒 Optional Enhancements
+#### 🔒 Optional Enhancements
 ### 1. Secure RDS Credentials
 Using AWS Systems Manager Parameter Store
 
 Store credentials:
-
+```bash
 /project/db-username → SecureString → <db-username>
 
 /project/db-password → SecureString → <db-password>
@@ -95,7 +106,9 @@ sudo yum install -y aws-cli
 aws ssm get-parameter --name "/project/db-username" --with-decryption --query "Parameter.Value" --output text
 aws ssm get-parameter --name "/project/db-password" --with-decryption --query "Parameter.Value" --output text
 
+```
 ### 2. DB Test Script
+```bash
 #!/bin/bash
 
 DB_HOST="<RDS-endpoint>"
@@ -110,6 +123,7 @@ Make it executable and run:
 
 chmod +x test_db.sh
 ./test_db.sh
+```
 
 ### 3. Monitor RDS Using CloudWatch
 
